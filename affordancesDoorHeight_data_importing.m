@@ -23,7 +23,7 @@ generalInfo.dataset_description.BIDSVersion         = 'unofficial extension';
 
 % optional for dataset_description.json
 generalInfo.dataset_description.License             = 'n/a';
-generalInfo.dataset_description.Authors             = {"Wang,S.", "Oliveira,G.S.", "Djebbara,Z", "Gramann, K."};
+generalInfo.dataset_description.Authors             = {"Wang,S."};
 generalInfo.dataset_description.Acknowledgements    = 'n/a';
 generalInfo.dataset_description.Funding             = {"China Scholarship Council"};
 generalInfo.dataset_description.ReferencesAndLinks  = {"unpublished"};
@@ -33,7 +33,7 @@ generalInfo.dataset_description.DatasetDOI          = 'n/a';
 generalInfo.InstitutionName                         = 'Technische Universitaet zu Berlin';
 generalInfo.InstitutionalDepartmentName             = 'Biological Psychology and Neuroergonomics';
 generalInfo.InstitutionAddress                      = 'Strasse des 17. Juni 135, 10623, Berlin, Germany';
-generalInfo.TaskDescription                         = 'Participants immersed in 2d Unity rooms controled their walking by four arrow buttons.';
+generalInfo.TaskDescription                         = 'Participants passed doors with different heights in virtual rooms.';
  
 
 % information about the eeg recording system 
