@@ -1,0 +1,201 @@
+clear bemobil_config
+
+%% General Setup
+bemobil_config.study_folder = ['P:\Sheng_Wang\exp2' filesep 'data' filesep]; %(NEEDS to have a filesep at the end, sorry!) 
+bemobil_config.filename_prefix = 'sub-';
+
+% foldernames (NEED to have a filesep at the end, sorry!) 
+bemobil_config.source_data_folder = ['0_source-data' filesep];
+bemobil_config.bids_data_folder = ['1_BIDS-data' filesep]; 
+bemobil_config.raw_EEGLAB_data_folder = ['2_raw-EEGLAB' filesep];
+bemobil_config.EEG_preprocessing_data_folder = ['3_EEG-preprocessing' filesep];
+bemobil_config.spatial_filters_folder = ['4_spatial-filters' filesep];
+bemobil_config.spatial_filters_folder_AMICA = ['4-1_AMICA' filesep];
+bemobil_config.single_subject_analysis_folder = ['5_single-subject-EEG-analysis' filesep];
+bemobil_config.motion_analysis_folder = ['6_single-subject-motion-analysis' filesep];
+
+% filenames
+bemobil_config.merged_filename = 'affordance_EEG.set';
+bemobil_config.basic_prepared_filename = 'basic_prepared.set';
+bemobil_config.preprocessed_filename = 'preprocessed.set';
+bemobil_config.filtered_filename = 'filtered.set';
+bemobil_config.amica_filename_output = 'AMICA.set';
+bemobil_config.dipfitted_filename = 'dipfitted.set';
+bemobil_config.preprocessed_and_ICA_filename = 'preprocessed_and_ICA.set';
+bemobil_config.single_subject_cleaned_ICA_filename = 'cleaned_with_ICA.set';
+bemobil_config.processed_motion_filename = 'motion_processed.set';
+               
+
+% scripts will find files containing respective string, sort them incrementally 
+% and output files merged within and between sessions. 
+% _ or - character not recommended (incompatible with bids, potentially breaks parsing)
+bemobil_config.session_names = {'sessionA', 'sessionB'};  %%should I type all sessions or blocks I have in the experiment? For example, at the moment I have a training and also an experiment part. The training is 12 trials and the experiment is 240 trials long. During the experiment, I have two mandatory breaks of minimum 2 minutes. The first mandatory break is after one third of the trials (after 80 trials) and the second one is after two third of the trials (after 160 trials). I also have optional breaks after one sixth (40), one half (120) and five sixth (200) trials. So I have 7 sessions or blocks, including training session. So should I adjust the parameters as: "sessionA", "sessionB""sessionC","sessionD","sessionE","sessionF","sessionG", right?
+
+% name of the task that is common to all sessions - only relevant for data in BIDS
+bemobil_config.bids_task_label = 'taskname';  %% maybe architectural affordances task?
+
+% a keyword contained in the EEG stream that is unique to EEG. 
+% Non-continuous (marker) streams will not be mixed up even if it contains this string.
+bemobil_config.bids_eeg_keyword = 'EEG';
+
+% [motion] keywords in stream names in .xdf file that contain motion data
+bemobil_config.rigidbody_streams = {'RigidBodyKeyword1', 'RigidBodyKeyword2', 'RigidbodyKeyword3'};  %%Since I have no motion data, could I get rid of this code line?
+
+% [motion] which rigidbody streams are present in which sessions
+% array of logicals number of sessios X number of rigidbody streams
+% in this example, all 3 rigidbodies are present in first session [1,1,1]
+% but only the first is present in the second session [1,0,0]
+bemobil_config.bids_rb_in_sessions = logical([1,1,1;1,0,0]); %%Since I have no motion data, could I get rid of this code line?
+
+% Fields below have default values and can be optinally configured
+% most of these are used to either be saved as channel information in BIDS
+% or to be provided as entries in metadata files
+% (simply not creating the fields will leave you with default values)
+%--------------------------------------------------------------------------
+
+% other data types present
+% default value {'motion'}, if importing only EEG, enter {} 
+bemobil_config.other_data_types         = {'motion'}; %%Since I have no motion data, could I get rid of this code line?
+
+% [motion] simple, human readable labels of the motion streams
+% default values are taken from field rigidbody_streams
+bemobil_config.rigidbody_names          =  {'Head', 'LeftThigh', 'LeftLowerLeg'}; %%Since I have no motion data, could I get rid of this code line?
+
+% [motion] if more detailed anatomical description or coordinates are present, specify here
+% default values are taken from field rigidbody_names
+bemobil_config.rigidbody_anat           =  {'central forehead', 'left vastus lateralis', 'left tibialis anterior'}; %%Since I have no motion data, could I get rid of this code line?
+
+% [motion] for unisession, just use a string. If multisession, cell array of size 1 x session number
+bemobil_config.bids_motion_position_units      = {'m','vm'};                       %%Since I have no motion data, could I get rid of these two code lines?
+bemobil_config.bids_motion_orientation_units   = {'rad','rad'};                     % if multisession, cell array of size 1 x session number
+
+% [motion] custom function names - customization recommended for data sets that have
+%                                  an 'unconventional' naming scheme for motion channels
+bemobil_config.bids_motionconvert_custom    = 'bids_motionconvert_mobiworkshop';  %%Since I have no motion data, could I get rid of these code lines?
+bemobil_config.bids_parsemarkers_custom     = 'bids_parsemarkers_mobiworkshop';
+
+
+%% Preprocessing
+
+% enter channels that you did not use at all (e.g. with our custom MoBI 160 chan layout, only 157 chans are used), leave
+% empty, if all channels are used
+% process_config.channels_to_remove = {'N29' 'N30' 'N31'};
+bemobil_config.channels_to_remove = [];
+
+% enter EOG channel names here:
+% bemobil_config.eog_channels  = {'VEOG', 'HEOG'};
+bemobil_config.eog_channels  = {'EOG'};  %%I get this information from the file named "sub-1_task-DefaultTask_channels", with pathway "P:\Sheng_Wang\exp1\data\1_BIDS-data\sub-1\eeg".
+
+% if you add a channel here it needs to have a location as well. this means a new channel will be created and the old
+% reference will be back in the dataset 
+% bemobil_config.ref_channel  = 'FCz';
+bemobil_config.ref_channel  = ['CPz']; 
+
+% If all channels have a prefix it can be removed here, by entering a single char in the cell array. it's also possible
+% to rename single channels here if needed. for this, enter a matrix of channel names (nbchans,2 (from->to))
+bemobil_config.rename_channels = {'EEGstream EE225_'}; 
+
+% resample frequency during preprocessing (leave empty if you resample before, or your data is already correctly
+% sampled)
+bemobil_config.resample_freq = 250;   %% is this called down-sampling? And I guess 250HZ is the standard down-sampling operation of our group.  
+% bemobil_config.resample_freq = []; 
+
+% automatic channel cleaning:
+%   chancorr_crit                       - Correlation threshold. If a channel is correlated at less than this value
+%                                           to its robust estimate (based on other channels), it is considered abnormal in
+%                                           the given time window. OPTIONAL, default = 0.8.
+%   chan_max_broken_time                - Maximum time (either in seconds or as fraction of the recording) during which a 
+%                                           retained channel may be broken. Reasonable range: 0.1 (very aggressive) to 0.6
+%                                           (very lax). OPTIONAL, default = 0.5.
+%   chan_detect_num_iter                - Number of iterations the bad channel detection should run (default = 10)
+%   chan_detected_fraction_threshold	- Fraction how often a channel has to be detected to be rejected in the final
+%                                           rejection (default 0.5)
+%   flatline_crit                       - Maximum duration a channel can be flat in seconds (default 'off')
+%   line_noise_crit                     - If a channel has more line noise relative to its signal than this value, in
+%                                           standard deviations based on the total channel population, it is considered
+%                                           abnormal. (default: 'off')
+
+bemobil_config.chancorr_crit = 0.8;   %% I think from line 122 to line 127, they are all default setting and do not need to be modified. Right?
+bemobil_config.chan_max_broken_time = 0.4; % bad channel detection
+bemobil_config.chan_detect_num_iter = 10;
+bemobil_config.chan_detected_fraction_threshold = 0.5;
+bemobil_config.flatline_crit = 'off';
+bemobil_config.line_noise_crit = 'off';
+
+% channel locations: leave this empty if you have standard channel names that should use standard 10-20 locations,
+% otherwise every dataset needs to have a channel locations file in the raw_data folder, and the chanloc file needs to
+% have the correct participant prefix!
+
+% bemobil_config.channel_locations_filename = 'channel_locations.elc';
+bemobil_config.channel_locations_filename = [];  %%Sorry, I am not sure where to find this specific information. 
+
+% ZapLine-Plus to reduce line noise frequencies. Automatically finds noise frequencies and removes them as good as
+% possible with Zapline. See 'help clean_data_with_zapline_plus' for more info about parameter tweaking.
+
+% If the 'noisefreqs' field is set to empty, searches automatically, but you can also enter predefined noise frequencies
+% here as a vector.
+
+% Set the whole 'bemobil_config.zaplineConfig' field to [] if no noise is present in your data (haha).
+
+bemobil_config.zaplineConfig.noisefreqs = []; %%Sorry, I am not sure where to find this specific information. 
+
+%% AMICA Parameters
+
+% filter for AMICA:
+% See Klug & Gramann (2020) for an investigation of filter effect on AMICA -> 1.25 Hz should be a good compromise if you
+% don't know how much movement exists, otherwise even higher may be good, up to 2Hz, and you need to subtract 0.25 to
+% obtain the correct cutoff value for a filter order of 1650
+bemobil_config.filter_lowCutoffFreqAMICA = 1.75; % 1.75 is 1.5Hz cutoff!    before: from 1.75 to 0.75 (stationary); now 1.75 (mobile)
+bemobil_config.filter_AMICA_highPassOrder = 1650; % was used by Klug & Gramann (2020)
+bemobil_config.filter_highCutoffFreqAMICA = []; % not used
+bemobil_config.filter_AMICA_lowPassOrder = [];  %%Sorry, I am not sure where to find this specific information for line 154 and 155. 
+
+% additional AMICA settings
+bemobil_config.num_models = 1; % default 1
+bemobil_config.AMICA_autoreject = 1; % uses automatic rejection method of AMICA. no time-cleaning (manual or automatic) is needed then!
+bemobil_config.AMICA_n_rej = 10; % default 10
+bemobil_config.AMICA_reject_sigma_threshold = 2.7; % default 3; bellow 3, more strict (2.5-3).
+bemobil_config.AMICA_max_iter = 2000; % default 2000
+
+% on some PCs AMICA may crash before the first iteration if the number of threads and the amount the data does not suit
+% the algorithm. Jason Palmer has been informed, but no fix so far. just roll with it. if you see the first iteration
+% working there won't be any further crashes. in this case just press "close program" or the like and the
+% bemobil_spatial_filter algorithm will AUTOMATICALLY reduce the number of threads and start AMICA again. this way you
+% will always have the maximum number of threads that should be used for AMICA. check in the task manager how many
+% threads you have theoretically available and think how much computing power you want to devote for AMICA. 
+
+% 4 threads are most effective for single subject speed, more threads don't really shorten the calculation time much.
+% best efficiency is using just 1 thread and have as many matlab instances open as possible (limited by the CPU usage).
+% Remember your RAM limit in this case.
+
+bemobil_config.max_threads = 4; % default 4
+
+% for warping the electrode locations to the standard 10-20 locations (leave
+% empty if using standard locations)
+% bemobil_config.warping_channel_names = {3,'FTT9h';45,'FTT10h';84,'AFz';87,'Cz'};
+bemobil_config.warping_channel_names = [];  %% yes, I use ANT system. And I guess it is using the standard location. So I will leave it empty. 
+
+% dipfit settings
+bemobil_config.residualVariance_threshold = 100;
+bemobil_config.do_remove_outside_head = 'off';
+bemobil_config.number_of_dipoles = 1;   %% Are they default value, from line 183 to 185?
+
+% IC_label settings
+% 'default' classifier did not lead to good classification of muscles (see Klug & Gramann (2020)), 'lite' was better
+% overall.
+bemobil_config.iclabel_classifier = 'lite';
+
+% 'Brain', 'Muscle', 'Eye', 'Heart', 'Line Noise', 'Channel Noise', 'Other'
+bemobil_config.iclabel_classes = [1, 2, 4:7];  %just remove eye movement
+
+% if the threshold is set to -1, the popularity classifier is used (i.e. every IC gets the class with the highest
+% probability), if it is set to a value, the summed score of the iclabel_classes must be higher than this threshold to
+% keep an IC. Must be in the [0 1] range!
+bemobil_config.iclabel_threshold = -1;  %% I choose the popularity classifier as a default setting. 
+
+%% Motion Processing Parameters
+
+bemobil_config.lowpass_motion = 6;
+bemobil_config.lowpass_motion_after_derivative = 18;   %% Since I have no motion data, should I remove this two lines 202, 203?
+% bemobil_config.lowpass_motion = [];
+% bemobil_config.lowpass_motion_after_derivative = [];
