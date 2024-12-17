@@ -1,0 +1,107 @@
+
+#Approaching time
+import pandas as pd
+import ptitprince as pt
+import seaborn as sns
+import matplotlib.pyplot as plt
+sns.set(style="whitegrid",font_scale=2)
+import matplotlib.collections as clt
+df = pd.read_csv(r"C:\Users\sheng\Desktop\Python\exp2\approachingTime\approaching_time_standardBody_raincloudPlot_longFormat.csv", encoding='latin1')
+#adding a red line connecting the groups’ mean value (useful for longitudinal data)
+dx="Door height"; dy="Approaching Time (seconds)"; ort="v"; pal = "Set2"; sigma = .2
+f, ax = plt.subplots(figsize=(6, 5))
+pt.RainCloud(x = dx, y = dy, data = df, palette = pal,
+bw = sigma, width_viol = .4, ax = ax,
+orient = ort, pointplot = True, point_size=3.5, alpha=0.9 # increased jitter and point size, # Adjust move and jitter to prevent overlap, transpancy
+)
+# Modify the y-axis label to display "Approaching Time" and "(seconds)" on two lines
+ax.set_ylabel("Approaching Time\n(seconds)")
+# Save the figure
+plt.savefig('approaching time_standardBody_raincloudPlot_longFormat_y_axis_2columns.png', dpi=300, bbox_inches='tight')
+
+
+#SAM (example: dominance dimension)
+import pandas as pd
+import ptitprince as pt
+import seaborn as sns
+import matplotlib.pyplot as plt
+sns.set(style="whitegrid", font_scale=2)
+import matplotlib.collections as clt
+# Load in the repeated data
+df = pd.read_csv (r"C:\Users\sheng\Desktop\Python\exp2\SAM\Dominance.csv", encoding='latin1')
+# Hue Input for Subgroups
+dx = "Door height"
+dy = "Dominance ranking"
+dhue = "Imperative stimulus"
+ort = "v"
+pal = "Set2"
+sigma = .2
+# Move the rain under the boxplot
+f, ax = plt.subplots(figsize=(12, 5))
+pt.RainCloud(x=dx, y=dy, hue=dhue, data=df, palette=pal, bw=sigma, width_viol=.3, ax=ax, orient=ort, point_size=3.5, alpha=.65, dodge=True, pointplot=True, move=.2,
+             box_medianprops={"zorder": 11, "color": "black", "linestyle":'dashed'},
+             box_meanprops={"zorder" : 11, "color": "black", "linestyle":'solid'}, box_meanline=True, box_showmeans=True)
+# Modify the y-axis label 
+ax.set_ylabel("Dominance ranking")
+# Save the figure
+plt.savefig('Dominance ranking.png', dpi=300, bbox_inches='tight')
+
+
+#early ERPs
+import pandas as pd
+import ptitprince as pt
+import seaborn as sns
+import matplotlib.pyplot as plt
+# sns.set(style="whitegrid", font_scale=2)
+import matplotlib.collections as clt
+# Load the data
+df = pd.read_csv(r"P:\Sheng_Wang\exp2\data visualization\raincloud plot\ERPs\earlyERPs\19sub\latency_50ms\global\posterior N260\Plots_Electrode26_29_64 N260_lownormalhigh_longFormat.csv", encoding='latin1')
+
+# Rainclouds with FacetGrid
+g = sns.FacetGrid(df, col="Electrode", sharey=True, height=6, aspect=0.4, legend_out=True)
+g.map_dataframe(pt.RainCloud, x="Door height", y="N260_Mean_Amplitudes (µV)", orient="v", width_viol=0.5, pointplot=True)
+
+# Remove 'Electrode =' from facet titles and keep only electrode names
+g.set_titles("{col_name}")
+
+# Access the first subplot (you can loop over if needed)
+ax = g.axes[0, 0]  # First subplot in the grid
+ax.set_ylabel("N260_\nMean_Amplitudes (µV)", fontsize=16)
+
+# Adjust layout and title
+g.fig.subplots_adjust(top=0.90, bottom=0.2)
+g.fig.suptitle('Door Height', fontsize=16, y = 0.15)
+
+# Save and show the plot
+plt.savefig(r'P:\Sheng_Wang\exp2\data visualization\raincloud plot\ERPs\earlyERPs\19sub\latency_50ms\global\posterior N260\Electrode26_29_64 N260_lownormalhigh.png', dpi=300, bbox_inches='tight')
+plt.show()
+
+
+#PINV
+import pandas as pd
+import ptitprince as pt
+import seaborn as sns
+import matplotlib.pyplot as plt
+sns.set(style="whitegrid", font_scale=2)
+import matplotlib.collections as clt
+# Load in the repeated data
+df = pd.read_csv (r"C:\Users\sheng\Desktop\Python\exp2\ERPs\MRCPs\19sub\PINV\latency1100-1400ms\Electrode64 PINV_lownormalhigh_GoNoGo_longFormat.csv", encoding='latin1')
+# Hue Input for Subgroups
+dx = "Door height"
+dy = "Oz_PINV_Mean_Amplitudes (µV)"
+dhue = "Imperative stimulus"
+ort = "v"
+pal = "Set2"
+sigma = .2
+
+# Move the rain under the boxplot
+f, ax = plt.subplots(figsize=(12, 5))
+pt.RainCloud(x=dx, y=dy, hue=dhue, data=df, palette=pal, bw=sigma, width_viol=.3, ax=ax, orient=ort, point_size=3.5, alpha=.65, dodge=True, pointplot=True, move=.2,
+             box_medianprops={"zorder": 11, "color": "black", "linestyle":'dashed'},
+             box_meanprops={"zorder" : 11, "color": "black", "linestyle":'solid'}, box_meanline=True, box_showmeans=True)
+
+# Modify the y-axis label 
+ax.set_ylabel("Oz_PINV_\nMean_Amplitudes (µV)")
+# Save the figure
+plt.savefig('Electrode64 PINV_lownormalhigh.png', dpi=300, bbox_inches='tight')
+
